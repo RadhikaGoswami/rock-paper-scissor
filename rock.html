@@ -1,0 +1,260 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>✊ - 🖐️ - ✌️</title>
+    <style>
+        html {
+            background: rgba(228, 241, 255, 0.55);
+        }
+
+        body {
+            text-align: center;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 0.8fr 1fr 0.8fr;
+            place-items: center center;
+            gap: 8px;
+            margin-bottom: 50px;
+        }
+
+        .big-emoji {
+            font-size: 4rem;
+        }
+
+        .mid-emoji {
+            font-size: 2.5rem;
+        }
+
+        .game-title {
+            grid-column: 2 / 3;
+        }
+
+        .buttons {
+            grid-column: 2 / 3;
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn {
+            border: 0;
+            vertical-align: baseline;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #fff;
+            width: 120px;
+            height: 120px;
+            border-radius: 5px;
+            margin: 10px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+            position: relative;
+            -webkit-transform: translateY(0);
+            -webkit-transition: all .6s cubic-bezier(0.165, 0.84, 0.44, 1);
+            transition: all .6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .btn:after {
+            content: "";
+            border-radius: 5px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            -webkit-transition: all .6s cubic-bezier(0.165, 0.84, 0.44, 1);
+            transition: all .6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .rock::before {
+            content: "✊";
+        }
+
+        .paper::before {
+            content: "🖐️";
+        }
+
+        .scissors::before {
+            content: "✌️";
+        }
+
+        .btn:focus {
+            outline: none;
+        }
+
+        .btn::-moz-focus-inner {
+        border: 0;
+        }
+
+        .btn:hover:after {
+            opacity: 1;
+        }
+
+        .btn:hover {
+            -webkit-transform: scale(1.25, 1.25);
+            transform: scale(1.25, 1.25);
+        }
+
+        .human {
+            grid-column: 1 / 2;
+        }
+
+        .score {
+            grid-column: 2 / 3;
+            font-size: 2.5rem;
+        }
+
+        .machine {
+            grid-column: 3 / 4;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h3>You</h3>
+        <h1 class="game-title">Rock-paper-scissors</h1>
+        <h3>Machine</h3>
+        <div class="big-emoji"> 🧑 </div>
+        <div class="buttons">
+            <button class="btn rock big-emoji" data-choice="rock"></button>
+            <button class="btn paper big-emoji" data-choice="paper"></button>
+            <button class="btn scissors big-emoji" data-choice="scissors"></button>
+        </div>
+        <div id="after_this" class="big-emoji"> 🤖 </div>
+    </div>
+</body>
+
+<script>
+    function capitalize(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    function game() {
+        let step = 0;
+        let computerWinScore = 0;
+        let playerWinScore = 0;
+        let gameOver = false;
+        const btns = document.querySelectorAll('button.btn');
+        const container = document.querySelector('.container');
+
+        function displayRoundResults(playerSelection, computerSelection) {
+            const humanResult = document.createElement('div');
+            humanResult.classList.add('human', 'mid-emoji', playerSelection);
+
+            const machineResult = document.createElement('div');
+            machineResult.classList.add('machine', 'mid-emoji', computerSelection);
+
+            const score = document.createElement('div');
+            score.classList.add('score');
+            score.textContent = `${playerWinScore} : ${computerWinScore}`;
+
+            if (step === 0) {
+                container.appendChild(humanResult)
+                container.appendChild(score)
+                container.appendChild(machineResult)
+            } else {
+                const referenceNode = document.querySelector('#after_this');
+                referenceNode.parentNode.insertBefore(machineResult, referenceNode.nextSibling);
+                referenceNode.parentNode.insertBefore(score, referenceNode.nextSibling);
+                referenceNode.parentNode.insertBefore(humanResult, referenceNode.nextSibling);
+            }
+        }
+
+        function computerPlay() {
+            const randomNum = Math.floor(Math.random() * (4 - 1)) + 1;
+            switch (randomNum) {
+                case 1:
+                    return "rock";
+                case 2:
+                    return "paper";
+                case 3:
+                    return "scissors";
+            }
+        }
+
+        function playRound(playerSelection, computerSelection) {
+            switch (playerSelection) {
+                case "rock":
+                    // console.log("h - rock");
+                    switch (computerSelection) {
+                        case "rock":
+                            // console.log("m - rock");
+                            break;
+                        case "paper":
+                            // console.log("m - paper");
+                            computerWinScore++;
+                            break;
+                        case "scissors":
+                            // console.log("m - scissors");
+                            playerWinScore++;
+                            break;
+                    }
+                    break;
+                case "paper":
+                    // console.log("h - paper");
+                    switch (computerSelection) {
+                        case "rock":
+                            // console.log("m - rock");
+                            playerWinScore++;
+                            break;
+                        case "paper":
+                            // console.log("m - paper");
+                            break;
+                        case "scissors":
+                            // console.log("m - scissors");
+                            computerWinScore++;
+                            break;
+                    }
+                    break;
+                case "scissors":
+                    // console.log("h - scissors");
+                    switch (computerSelection) {
+                        case "rock":
+                            // console.log("m - rock");
+                            computerWinScore++;
+                            break;
+                        case "paper":
+                            // console.log("m - paper");
+                            playerWinScore++;
+                            break;
+                        case "scissors":
+                            // console.log("m - scissors");
+                            break;
+                    }
+                    break;
+            }
+        }
+
+        function finishGame() {
+            computerWinScore = 0;
+            playerWinScore = 0;
+            gameOver = true;
+        }
+
+        btns.forEach(function (btn) {
+            btn.addEventListener('click', function (event) {
+                if (!gameOver) {
+                    step++;
+                    const playerSelection = event.target.dataset['choice'];
+                    const computerSelection = computerPlay();
+                    playRound(playerSelection, computerSelection);
+                    displayRoundResults(playerSelection, computerSelection);
+                    if (computerWinScore === 5 || playerWinScore === 5) finishGame(computerWinScore, playerWinScore);
+                };
+            });
+        });
+    };
+    game();
+</script>
+
+</html>
